@@ -3,134 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Tables with Status</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-        }
-        .table-container {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-        .status-line {
-            padding: 10px;
-            color: #fff;
-            text-align: center;
-            font-weight: bold;
-        }
-        .status-active {
-            background-color: green;
-        }
-        .status-inactive {
-            background-color: red;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
+    <title>L1J bosses</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="grid-container">
-    <div class="table-container">
-        <div class="status-line status-active">Cycle active</div>
-        <table>
-            <thead>
-            <tr>
-                <th>Header 1</th>
-                <th>Header 2</th>
-                <th>Header 3</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Data 1</td>
-                <td>Data 2</td>
-                <td>Data 3</td>
-            </tr>
-            <tr>
-                <td>Data 4</td>
-                <td>Data 5</td>
-                <td>Data 6</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="table-container">
-        <div class="status-line status-inactive">Cycle not active</div>
-        <table>
-            <thead>
-            <tr>
-                <th>Header 1</th>
-                <th>Header 2</th>
-                <th>Header 3</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Data 1</td>
-                <td>Data 2</td>
-                <td>Data 3</td>
-            </tr>
-            <tr>
-                <td>Data 4</td>
-                <td>Data 5</td>
-                <td>Data 6</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="table-container">
-        <div class="status-line status-active">Cycle active</div>
-        <table>
-            <thead>
-            <tr>
-                <th>Header 1</th>
-                <th>Header 2</th>
-                <th>Header 3</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Data 1</td>
-                <td>Data 2</td>
-                <td>Data 3</td>
-            </tr>
-            <tr>
-                <td>Data 4</td>
-                <td>Data 5</td>
-                <td>Data 6</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <!-- Add more .table-container elements as needed -->
-</div>
+<h1 class="title">L1J bosses</h1>
+
+<!-- Container for tables -->
+<div id="grid-container"></div>
+
+<script src="script.js"></script>
+
 </body>
 </html>
