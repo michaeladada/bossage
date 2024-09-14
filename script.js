@@ -79,7 +79,26 @@ function calculateCycles(rawCycles) {
         cycles[rawCycleName] = cycleActiveIn(rawCycles[rawCycleName]);
     }
 
-    return cycles;
+    const entries = Object.entries(cycles);
+
+    // Step 3: Sort the array by 'active', 'progressPercent', and then 'activeInSeconds'
+    entries.sort(([, a], [, b]) => {
+        // First: Sort by 'active', with true first
+        if (a.active !== b.active) {
+            return a.active === true ? -1 : 1;
+        }
+
+        // Second: Sort by 'progressPercent'
+        if (a.active && a.progressPercent !== b.progressPercent) {
+            return b.progressPercent - a.progressPercent;
+        }
+
+        // Third: Sort by 'activeInSeconds'
+        return a.activeInSeconds - b.activeInSeconds;
+    });
+
+    // Step 4: Convert the sorted array back to an object (optional)
+    return Object.fromEntries(entries);
 }
 
 function parseCSV(csv) {
@@ -150,8 +169,8 @@ function fancyTimeFormat(duration) {
 }
 
 function createTable(cycleBosses, cycleData) {
-    for (const cycleName in cycleBosses) {
-        if (!cycleBosses.hasOwnProperty(cycleName)) {
+    for (const cycleName in cycleData) {
+        if (!cycleData.hasOwnProperty(cycleName)) {
             continue;
         }
 
