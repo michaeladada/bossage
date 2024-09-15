@@ -1,7 +1,7 @@
 const SPREADSHEET_ID = '1nsi6raNA51ukPT-aTu5iTG3GNKLGU35lpDZKLDV88YU'; // Replace with your Spreadsheet ID
 const SHEET_NAME = 'Sheet1'; // Replace with your desired sheet name
 
-const cycles = {
+let cycles = {
     "Aden" : {
         startTimeEpochSeconds: "1726277400", // time date
         cycleMinutes: "240",
@@ -63,11 +63,15 @@ async function fetchCSVData() {
         const csvText = await response.text();
 
         const bossData = parseCSV(csvText);
-        const cycleData = calculateCycles(cycles);
-        createTable(bossData, cycleData);
+        buildCycleBossTable(bossData, cycles);
     } catch (error) {
         console.error('Error fetching CSV data:', error);
     }
+}
+
+function buildCycleBossTable(rawBosses, rawCycles) {
+    const cycleData = calculateCycles(cycles);
+    createTable(rawBosses, cycleData);
 }
 
 function calculateCycles(rawCycles) {
@@ -133,10 +137,6 @@ function parseCSV(csv) {
 }
 
 function cycleActiveIn(cycle) {
-    // const cycle = cycles[cycleName];
-    if(cycle === undefined) {
-        return { progressPercent: 0, activeInSeconds: 0, active: false };
-    }
     const currentTimeSeconds = new Date().getTime() / 1000;
     const diff = currentTimeSeconds - cycle.startTimeEpochSeconds;
     const timeInCycleSeconds = diff % (cycle.cycleMinutes * 60);
@@ -175,7 +175,7 @@ function createTable(cycleBosses, cycleData) {
             continue;
         }
 
-        const cycle = cycleData[cycleName] || { progressPercent: 0, activeInSeconds: 0, active: false };
+        const cycle = cycleData[cycleName];
         const tableContainer = document.createElement('div');
         tableContainer.className = 'table-container';
 
@@ -225,12 +225,17 @@ function addHeader(headerRow) {
     const thLoc = document.createElement('th');
     thLoc.textContent = "Location";
     headerRow.appendChild(thLoc);
+
+    const thAction = document.createElement('th');
+    thAction.textContent = "Action";
+    headerRow.appendChild(thAction);
 }
 
 function addBoss(boss) {
     const row = document.createElement('tr');
 
     const tdName = document.createElement('td');
+    tdName.id = "td-" + boss.name;
     tdName.textContent = boss.name;
     row.appendChild(tdName);
 
@@ -242,9 +247,24 @@ function addBoss(boss) {
     tdLoc.textContent = boss.location;
     row.appendChild(tdLoc);
 
+    const tdAction = document.createElement('td');
+    const actionElement = document.createElement('a');
+    actionElement.className = "link-button";
+    actionElement.textContent = "Dead";
+    actionElement.onclick = function() {
+        bossDead(boss.name);
+    };
+    tdAction.appendChild(actionElement);
+    row.appendChild(tdAction);
+
     return row;
 }
 
-
-// Fetch and display data when the page loads
-fetchCSVData();
+function bossDead(bossName) {
+    console.log(`Making ${bossName} as dead`);
+    const tdBossName = document.getElementById("td-" + bossName)
+    tdBossName.className = "strikethrough";
+    if (typeof bossDeadNotification === "function") {
+        bossDeadNotification(bossName);
+    }
+}

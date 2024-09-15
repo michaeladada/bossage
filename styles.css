@@ -36,6 +36,9 @@ body {
 .small-text {
     font-size: 12px;
 }
+.strikethrough {
+    text-decoration: line-through;
+}
 table {
     width: 100%;
     border-collapse: collapse;
@@ -49,4 +52,22 @@ th, td {
 }
 th {
     background-color: #f4f4f4;
+}
+.link-button {
+    color: #007bff;              /* Link color */
+    text-decoration: underline;   /* Underline to resemble a link */
+    cursor: pointer;              /* Pointer cursor to indicate it's clickable */
+    font-weight: 500;             /* Slightly bold for emphasis */
+    transition: color 0.3s ease;  /* Smooth transition on hover */
+}
+.link-button:hover {
+    color: #0056b3;               /* Darker color on hover */
+}
+.link-button:active {
+    color: #003f7f;               /* Even darker color when clicked */
+}
+.link-button:focus {
+    outline: none;                /* Remove default outline */
+    text-decoration: none;        /* Remove underline when focused */
+    border-bottom: 2px solid #0056b3;  /* Show border on focus for accessibility */
 }
