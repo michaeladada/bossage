@@ -43,7 +43,7 @@ const cycles = {
         activeMinutes: "120"
     },
     "Night" : {
-        startTimeEpochSeconds: "1725915600", // time date
+        startTimeEpochSeconds: "1725919200", // time date
         cycleMinutes: "240",
         activeMinutes: "120"
     },
