@@ -143,8 +143,9 @@ function cycleActiveIn(cycle) {
     const activeInSeconds = parseInt((cycle.cycleMinutes * 60) - timeInCycleSeconds, 10);
     const cycleProgressDouble = timeInCycleSeconds / (cycle.activeMinutes * 60) * 100;
     const cycleProgressPercent = parseInt(cycleProgressDouble, 10);
+    const timeLeftInSeconds =  (cycle.activeMinutes * 60) - timeInCycleSeconds;
     const active = timeInCycleSeconds / (cycle.activeMinutes * 60) < 1;
-    return { progressPercent: cycleProgressPercent, activeInSeconds: activeInSeconds, active: active };
+    return { progressPercent: cycleProgressPercent, activeInSeconds: activeInSeconds, active: active, timeLeftInSeconds: timeLeftInSeconds };
 }
 
 function fancyTimeFormat(duration) {
@@ -180,7 +181,15 @@ function createTable(cycleBosses, cycleData) {
 
         const div = document.createElement('div');
         div.className = "status-line " + (cycle.active ? "status-active" : "status-inactive");
-        div.innerText = cycleName + " " + (cycle.active ? `(chance up: ${cycle.progressPercent}%)` : `(cycle start at: ${fancyTimeFormat(cycle.activeInSeconds)})`);
+        div.innerText = cycleName + " " + (cycle.active ? `(${cycle.progressPercent}%)` : `(Start in: ${fancyTimeFormat(cycle.activeInSeconds)})`);
+        const divSmall = document.createElement('div');
+        divSmall.className = "small-text";
+        divSmall.innerText = `Time left: ${fancyTimeFormat(cycle.timeLeftInSeconds)}`;
+        if (cycle.active) {
+            div.appendChild(divSmall);
+        }
+        tableContainer.appendChild(div);
+
         const table = document.createElement('table');
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
@@ -195,7 +204,6 @@ function createTable(cycleBosses, cycleData) {
             tbody.appendChild(bossRow);
         });
 
-        tableContainer.appendChild(div);
         table.appendChild(thead);
         table.appendChild(tbody);
         tableContainer.appendChild(table);

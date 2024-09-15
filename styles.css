@@ -33,6 +33,9 @@ body {
 .status-inactive {
     background-color: red;
 }
+.small-text {
+    font-size: 12px;
+}
 table {
     width: 100%;
     border-collapse: collapse;
