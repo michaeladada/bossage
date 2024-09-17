@@ -1,24 +1,46 @@
-const SPREADSHEET_ID = '1nsi6raNA51ukPT-aTu5iTG3GNKLGU35lpDZKLDV88YU'; // Replace with your Spreadsheet ID
-const SHEET_NAME = 'Sheet1'; // Replace with your desired sheet name
 
-// CSV export URL for public Google Sheets
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&sheet=${SHEET_NAME}`;
+function buildCycleBossTable(rawBosses, rawCycles, bossesDeath) {
+    if(!bossesDeath) {
+        bossesDeath = [];
+    }
+    const cycleData = calculateCycles(rawCycles);
+    const cloneBossesDeath = JSON.parse(JSON.stringify(bossesDeath));
 
-async function fetchCSVData() {
-    try {
-        const response = await fetch(CSV_URL);
-        const csvText = await response.text();
+    populateFullBossData(rawBosses, cycleData, cloneBossesDeath)
+    createCycleTable(rawBosses, cycleData);
+}
 
-        const bossData = parseCSV(csvText);
-        buildCycleBossTable(bossData, cycles);
-    } catch (error) {
-        console.error('Error fetching CSV data:', error);
+function populateFullBossData(rawBosses, cycleData, bossesDeath) {
+    for (const rawCycleName in cycleData) {
+        if (!cycleData.hasOwnProperty(rawCycleName)) {
+            continue;
+        }
+        const bosses = rawBosses[rawCycleName];
+        bosses.forEach(boss => {
+            boss.lastKilledSeconds = lastBossDeath(boss.name, bossesDeath);
+            const currentTimeSeconds = new Date().getTime() / 1000;
+            boss.lastKilledMinutesAgo = boss.lastKilledSeconds !== null ? (currentTimeSeconds - boss.lastKilledSeconds) / 60 : null;
+            boss.cycle = cycleData[rawCycleName];
+            boss.up = boss.lastKilledMinutesAgo !== null ? boss.lastKilledMinutesAgo > boss.cycle.rawCycle.activeMinutes : false
+        });
     }
 }
 
-function buildCycleBossTable(rawBosses, rawCycles) {
-    const cycleData = calculateCycles(cycles);
-    createTable(rawBosses, cycleData);
+function lastBossDeath(bossName, bossesDeath) {
+    let foundBoss = null;
+    bossesDeath.forEach(boss => {
+        if(foundBoss === null && boss.name === bossName) {
+            foundBoss = boss;
+        }
+    });
+
+    if (foundBoss === null) {
+        return null;
+    }
+
+    const index = bossesDeath.indexOf(foundBoss);
+    bossesDeath.splice(index, 1);
+    return foundBoss.deathTime;
 }
 
 function calculateCycles(rawCycles) {
@@ -52,37 +74,6 @@ function calculateCycles(rawCycles) {
     return Object.fromEntries(entries);
 }
 
-function parseCSV(csv) {
-    // Split CSV into rows
-    const rows = csv.trim().split('\n');
-
-    // Initialize an empty object to hold the grouped data
-    const bossData = {};
-
-    // Process each row
-    rows.forEach(row => {
-        // Split row into columns based on tab delimiter
-        const columns = row.split(',');
-
-        // Extract values from columns
-        const [name, lvl, cycle, loc, start, end] = columns;
-
-        // If the group is not already a key in the object, initialize it with an empty array
-        if (!bossData[cycle]) {
-            bossData[cycle] = [];
-        }
-
-        // Push the current row's data into the appropriate group
-        bossData[cycle].push({
-            name: name,
-            lvl: parseInt(lvl, 10),
-            location: loc + ` (${start}, ${end.trim()})`
-        });
-    });
-
-    return bossData;
-}
-
 function cycleActiveIn(cycle) {
     const currentTimeSeconds = new Date().getTime() / 1000;
     const diff = currentTimeSeconds - cycle.startTimeEpochSeconds;
@@ -92,7 +83,7 @@ function cycleActiveIn(cycle) {
     const cycleProgressPercent = parseInt(cycleProgressDouble, 10);
     const timeLeftInSeconds =  (cycle.activeMinutes * 60) - timeInCycleSeconds;
     const active = timeInCycleSeconds / (cycle.activeMinutes * 60) < 1;
-    return { progressPercent: cycleProgressPercent, activeInSeconds: activeInSeconds, active: active, timeLeftInSeconds: timeLeftInSeconds };
+    return { progressPercent: cycleProgressPercent, activeInSeconds: activeInSeconds, active: active, timeLeftInSeconds: timeLeftInSeconds, rawCycle: {...cycle} };
 }
 
 function fancyTimeFormat(duration) {
@@ -116,7 +107,7 @@ function fancyTimeFormat(duration) {
     return ret + "s";
 }
 
-function createTable(cycleBosses, cycleData) {
+function createCycleTable(cycleBosses, cycleData) {
     for (const cycleName in cycleData) {
         if (!cycleData.hasOwnProperty(cycleName)) {
             continue;
@@ -197,7 +188,7 @@ function addBoss(boss) {
     const tdAction = document.createElement('td');
     const actionElement = document.createElement('a');
     actionElement.className = "link-button";
-    actionElement.textContent = "Dead";
+    actionElement.textContent = boss.up ? "UP!!!" : "Dead";
     actionElement.onclick = function() {
         bossDead(boss.name);
     };
