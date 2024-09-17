@@ -138,8 +138,10 @@ function createCycleTable(cycleBosses, cycleData) {
         thead.appendChild(headerRow);
 
         cycleBosses[cycleName].forEach(item => {
-            const bossRow = addBoss(item)
-            tbody.appendChild(bossRow);
+            if(!item.hidden) {
+                const bossRow = addBoss(item)
+                tbody.appendChild(bossRow);
+            }
         });
 
         table.appendChild(thead);
