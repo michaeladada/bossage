@@ -174,7 +174,8 @@ function addBoss(boss) {
 
     const tdName = document.createElement('td');
     tdName.id = "td-" + boss.name;
-    tdName.textContent = boss.name;
+    tdName.textContent = boss.name + (boss.up ? "(UP!)" : "");
+    tdName.className = boss.up ? "boss-up" : "";
     row.appendChild(tdName);
 
     const tdLvl = document.createElement('td');
@@ -188,7 +189,7 @@ function addBoss(boss) {
     const tdAction = document.createElement('td');
     const actionElement = document.createElement('a');
     actionElement.className = "link-button";
-    actionElement.textContent = boss.up ? "UP!!!" : "Dead";
+    actionElement.textContent = "Dead";
     actionElement.onclick = function() {
         bossDead(boss.name);
     };

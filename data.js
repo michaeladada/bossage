@@ -52,12 +52,12 @@ const cycles = {
 }
 
 const bossesDeath = [
-    { name: "Ancient Giant", deathTime: 1726600058},
-    { name: "Dark Elder", deathTime: 1726597001},
-    { name: "Dark Elder", deathTime: 1726597301},
-    { name: "Ken Rauhel", deathTime: 1726290000},
-    { name: "Beleth", deathTime: 1726290000},
-    { name: "Baphomet", deathTime: 1720290000},
+    // { name: "Ancient Giant", deathTime: 1726600058},
+    // { name: "Dark Elder", deathTime: 1726597001},
+    // { name: "Dark Elder", deathTime: 1726597301},
+    // { name: "Ken Rauhel", deathTime: 1726290000},
+    // { name: "Beleth", deathTime: 1726290000},
+    // { name: "Baphomet", deathTime: 1720290000},
 ]
 
 const SPREADSHEET_ID = '1nsi6raNA51ukPT-aTu5iTG3GNKLGU35lpDZKLDV88YU'; // Replace with your Spreadsheet ID

@@ -33,6 +33,10 @@ body {
 .status-inactive {
     background-color: red;
 }
+.boss-up {
+    color: green;
+    font-weight: bold;
+}
 .small-text {
     font-size: 12px;
 }
