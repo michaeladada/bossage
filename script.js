@@ -18,10 +18,9 @@ function populateFullBossData(rawBosses, cycleData, bossesDeath) {
         const bosses = rawBosses[rawCycleName];
         bosses.forEach(boss => {
             boss.lastKilledSeconds = lastBossDeath(boss.name, bossesDeath);
-            const currentTimeSeconds = new Date().getTime() / 1000;
-            boss.lastKilledMinutesAgo = boss.lastKilledSeconds !== null ? (currentTimeSeconds - boss.lastKilledSeconds) / 60 : null;
             boss.cycle = cycleData[rawCycleName];
-            boss.up = boss.lastKilledMinutesAgo !== null ? boss.lastKilledMinutesAgo > boss.cycle.rawCycle.activeMinutes : false
+            boss.up = boss.lastKilledSeconds !== null && boss.lastKilledSeconds < boss.cycle.previousStartedAtSecondsEpoch;
+            boss.dead = boss.cycle.active && boss.lastKilledSeconds > boss.cycle.startedAtSecondsEpoch;
         });
     }
 }
@@ -78,12 +77,22 @@ function cycleActiveIn(cycle) {
     const currentTimeSeconds = new Date().getTime() / 1000;
     const diff = currentTimeSeconds - cycle.startTimeEpochSeconds;
     const timeInCycleSeconds = diff % (cycle.cycleMinutes * 60);
+    const cycleStartedAtSecondsEpoch = currentTimeSeconds - timeInCycleSeconds;
+    const previousStartedAtSecondsEpoch = cycleStartedAtSecondsEpoch - ((cycle.cycleMinutes - cycle.activeMinutes) * 60);
     const activeInSeconds = parseInt((cycle.cycleMinutes * 60) - timeInCycleSeconds, 10);
     const cycleProgressDouble = timeInCycleSeconds / (cycle.activeMinutes * 60) * 100;
     const cycleProgressPercent = parseInt(cycleProgressDouble, 10);
     const timeLeftInSeconds =  (cycle.activeMinutes * 60) - timeInCycleSeconds;
     const active = timeInCycleSeconds / (cycle.activeMinutes * 60) < 1;
-    return { progressPercent: cycleProgressPercent, activeInSeconds: activeInSeconds, active: active, timeLeftInSeconds: timeLeftInSeconds, rawCycle: {...cycle} };
+    return {
+        progressPercent: cycleProgressPercent,
+        activeInSeconds: activeInSeconds,
+        active: active,
+        timeLeftInSeconds: timeLeftInSeconds,
+        startedAtSecondsEpoch: cycleStartedAtSecondsEpoch,
+        previousStartedAtSecondsEpoch: previousStartedAtSecondsEpoch,
+        rawCycle: {...cycle}
+    };
 }
 
 function fancyTimeFormat(duration) {
@@ -177,7 +186,7 @@ function addBoss(boss) {
     const tdName = document.createElement('td');
     tdName.id = "td-" + boss.name;
     tdName.textContent = boss.name + (boss.up ? "(UP!)" : "");
-    tdName.className = boss.up ? "boss-up" : "";
+    tdName.className = boss.up ? "boss-up" : boss.dead ? "strikethrough" : "";
     row.appendChild(tdName);
 
     const tdLvl = document.createElement('td');

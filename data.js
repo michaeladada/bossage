@@ -20,12 +20,12 @@ const cycles = {
     //     activeMinutes: "20"
     // },
     "Beleth" : {
-        startTimeEpochSeconds: "1726284600", // time date
+        startTimeEpochSeconds: "1726439400", // time date
         cycleMinutes: "300",
         activeMinutes: "120"
     },
     "Baphomet" : {
-        startTimeEpochSeconds: "1726284600", // time date
+        startTimeEpochSeconds: "1726475400", // time date
         cycleMinutes: "300",
         activeMinutes: "150"
     },
