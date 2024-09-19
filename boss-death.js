@@ -2,7 +2,7 @@ async function loadBossDeathDataFromDiscord() {
     const response = await fetch('https://discord.com/api/v9/channels/998734693631524904/messages?limit=100', {
         method: 'GET',
         headers: {
-            'Authorization': 'MTI4NjIxNzMxNjAzMTI2Njk0Nw.GSGk-B.TH0_u_aJ2SORVuXVpS4sVYII2gHPDCx6CGUuxY',  // Add your authorization token
+            'Authorization': discordToken,  // Add your authorization token
             'Content-Type': 'application/json'          // Specify the content type
         }
     });
