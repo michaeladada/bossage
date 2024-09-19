@@ -19,10 +19,21 @@ function populateFullBossData(rawBosses, cycleData, bossesDeath) {
         bosses.forEach(boss => {
             boss.lastKilledSeconds = lastBossDeath(boss.name, bossesDeath);
             boss.cycle = cycleData[rawCycleName];
-            boss.up = boss.lastKilledSeconds !== null && boss.lastKilledSeconds < boss.cycle.previousStartedAtSecondsEpoch;
+            boss.up = isBossUp(boss.lastKilledSeconds, boss.cycle);
             boss.dead = boss.cycle.active && boss.lastKilledSeconds > boss.cycle.startedAtSecondsEpoch;
         });
     }
+}
+
+function isBossUp(lastKilled, cycle) {
+    if(lastKilled === null) {
+        return false;
+    }
+
+    if(cycle.active) {
+        return lastKilled < cycle.previousStartedAtSecondsEpoch;
+    }
+    return lastKilled < cycle.startedAtSecondsEpoch;
 }
 
 function lastBossDeath(bossName, bossesDeath) {
@@ -78,7 +89,7 @@ function cycleActiveIn(cycle) {
     const diff = currentTimeSeconds - cycle.startTimeEpochSeconds;
     const timeInCycleSeconds = diff % (cycle.cycleMinutes * 60);
     const cycleStartedAtSecondsEpoch = currentTimeSeconds - timeInCycleSeconds;
-    const previousStartedAtSecondsEpoch = cycleStartedAtSecondsEpoch - ((cycle.cycleMinutes - cycle.activeMinutes) * 60);
+    const previousStartedAtSecondsEpoch = cycleStartedAtSecondsEpoch - (cycle.cycleMinutes * 60);
     const activeInSeconds = parseInt((cycle.cycleMinutes * 60) - timeInCycleSeconds, 10);
     const cycleProgressDouble = timeInCycleSeconds / (cycle.activeMinutes * 60) * 100;
     const cycleProgressPercent = parseInt(cycleProgressDouble, 10);

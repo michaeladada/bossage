@@ -72,6 +72,9 @@ async function fetchCSVData() {
         const csvText = await response.text();
 
         const bossData = parseCSV(csvText);
+
+        const bossesDeath = await processBossData();
+
         buildCycleBossTable(bossData, cycles, bossesDeath);
     } catch (error) {
         console.error('Error fetching CSV data:', error);
