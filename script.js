@@ -293,8 +293,20 @@ function addOneTableBoss(boss) {
 
     const tdChance = document.createElement('td');
     const cycleActive = boss.cycle !== undefined && boss.cycle.active;
-    tdChance.textContent = boss.up === true ? "UP!" : cycleActive ? boss.cycle.progressPercent + '%' : "No chance";
-    tdChance.className = boss.up ? "boss-up" : "";
+    const hasChance = boss.up || (cycleActive && !boss.dead);
+    tdChance.textContent = boss.up === true ? "UP!" : hasChance ? boss.cycle.progressPercent + '%' : "No chance";
+    const over50 = !boss.up && cycleActive && boss.cycle.progressPercent >= 50;
+    const over75 = !boss.up && cycleActive && boss.cycle.progressPercent >= 75;
+    if (over50) {
+        tdChance.className = "boss-50-up";
+    }
+    if (over75) {
+        tdChance.className = "boss-75-up";
+    }
+    if(!hasChance) {
+        tdChance.className = "timer-not-active";
+    }
+    tdChance.className += boss.up ? "boss-up" : "";
     row.appendChild(tdChance);
 
     const tdCycleEnd = document.createElement('td');

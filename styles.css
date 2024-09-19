@@ -43,6 +43,12 @@ body {
     color: green;
     font-weight: bold;
 }
+.boss-50-up {
+    color: orange;
+}
+.boss-75-up {
+    color: green;
+}
 .timer-active {
     color: green;
 }
