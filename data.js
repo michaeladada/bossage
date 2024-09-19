@@ -60,8 +60,8 @@ const bossesDeath = [
     // { name: "Baphomet", deathTime: 1720290000},
 ]
 
-const SPREADSHEET_ID = '1nsi6raNA51ukPT-aTu5iTG3GNKLGU35lpDZKLDV88YU'; // Replace with your Spreadsheet ID
-const SHEET_NAME = 'Sheet1'; // Replace with your desired sheet name
+const SPREADSHEET_ID = '1ksa0AwGso9-Sp5-ngRmQthQbU-yE9DybUc9yIFlqip4'; // Replace with your Spreadsheet ID
+const SHEET_NAME = 'bosses'; // Replace with your desired sheet name
 
 // CSV export URL for public Google Sheets
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&sheet=${SHEET_NAME}`;
@@ -94,7 +94,7 @@ function parseCSV(csv) {
         const columns = row.split(',');
 
         // Extract values from columns
-        const [name, lvl, cycle, loc, start, end] = columns;
+        const [name, cycle, hidden] = columns;
 
         // If the group is not already a key in the object, initialize it with an empty array
         if (!bossData[cycle]) {
@@ -104,8 +104,10 @@ function parseCSV(csv) {
         // Push the current row's data into the appropriate group
         bossData[cycle].push({
             name: name,
-            lvl: parseInt(lvl, 10),
-            location: loc + ` (${start}, ${end.trim()})`
+            hidden: hidden.trim()
+            // cycle: cycle,
+            // lvl: parseInt(lvl, 10),
+            // location: loc// + ` (${start}, ${end.trim()})`
         });
     });
 
