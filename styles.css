@@ -13,6 +13,12 @@ body {
     width: 100%;
     max-width: 1200px;
 }
+#grid-container-boss {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
 .table-container {
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -36,6 +42,12 @@ body {
 .boss-up {
     color: green;
     font-weight: bold;
+}
+.timer-active {
+    color: green;
+}
+.timer-not-active {
+    color: red;
 }
 .small-text {
     font-size: 12px;

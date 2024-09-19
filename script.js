@@ -7,7 +7,8 @@ function buildCycleBossTable(rawBosses, rawCycles, bossesDeath) {
     const cloneBossesDeath = JSON.parse(JSON.stringify(bossesDeath));
 
     populateFullBossData(rawBosses, cycleData, cloneBossesDeath)
-    createCycleTable(rawBosses, cycleData);
+    // createCycleTable(rawBosses, cycleData);
+    createBossTable(rawBosses);
 }
 
 function populateFullBossData(rawBosses, cycleData, bossesDeath) {
@@ -127,6 +128,74 @@ function fancyTimeFormat(duration) {
     return ret + "s";
 }
 
+function createBossTable(cycleBosses) {
+    let clearBosses = [];
+    for (const cycleName in cycleBosses) {
+        // boss name
+        // up chance
+        // cycle time left / time to next cycle
+        clearBosses.push(...cycleBosses[cycleName]);
+    }
+
+    // const entries = Object.entries(clearBosses);
+    clearBosses.sort((a, b) => {
+        if (a.cycle === undefined) {
+            return 1;
+        }
+
+        if (a.up !== b.up) {
+            return a.up === true ? -1 : 1;
+        }
+
+        if (a.dead !== b.dead) {
+            return a.dead === true ? 1 : -1;
+        }
+
+        // First: Sort by 'active', with true first
+        if (a.cycle.active !== b.cycle.active) {
+            return a.cycle.active === true ? -1 : 1;
+        }
+
+        // Second: Sort by 'progressPercent'
+        if (a.cycle.active && a.cycle.progressPercent !== b.cycle.progressPercent) {
+            return b.cycle.progressPercent - a.cycle.progressPercent;
+        }
+
+        // Third: Sort by 'activeInSeconds'
+        return a.cycle.activeInSeconds - b.cycle.activeInSeconds;
+    });
+
+    const sortedBosses = clearBosses; //Object.fromEntries(entries);
+    console.log(sortedBosses);
+
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'table-container';
+
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+
+    // Create header row
+    const headerRow = document.createElement('tr');
+    addOneTableHeader(headerRow);
+    thead.appendChild(headerRow);
+
+    for (const index in sortedBosses) {
+        const boss = sortedBosses[index];
+        if(!boss.hidden) {
+            const bossRow = addOneTableBoss(boss)
+            tbody.appendChild(bossRow);
+        }
+    }
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+
+    // Add table container to the DOM
+    document.getElementById('grid-container-boss').appendChild(tableContainer);
+}
+
 function createCycleTable(cycleBosses, cycleData) {
     for (const cycleName in cycleData) {
         if (!cycleData.hasOwnProperty(cycleName)) {
@@ -186,9 +255,59 @@ function addHeader(headerRow) {
     thLoc.textContent = "Location";
     headerRow.appendChild(thLoc);
 
-    const thAction = document.createElement('th');
-    thAction.textContent = "Action";
-    headerRow.appendChild(thAction);
+    // const thAction = document.createElement('th');
+    // thAction.textContent = "Action";
+    // headerRow.appendChild(thAction);
+}
+
+function addOneTableHeader(headerRow) {
+    const thName = document.createElement('th');
+    thName.textContent = "Boss";
+    headerRow.appendChild(thName);
+
+    const thChance = document.createElement('th');
+    thChance.textContent = "Chance";
+    headerRow.appendChild(thChance);
+
+    const thNext = document.createElement('th');
+    thNext.textContent = "Cycle end";
+    headerRow.appendChild(thNext);
+
+    const thCycleEnd = document.createElement('th');
+    thCycleEnd.textContent = "Next cycle";
+    headerRow.appendChild(thCycleEnd);
+
+    // const thAction = document.createElement('th');
+    // thAction.textContent = "Action";
+    // headerRow.appendChild(thAction);
+}
+
+function addOneTableBoss(boss) {
+    const row = document.createElement('tr');
+
+    const tdName = document.createElement('td');
+    tdName.id = "td-" + boss.name;
+    tdName.textContent = boss.name;
+    tdName.className = boss.dead ? "strikethrough" : "";
+    row.appendChild(tdName);
+
+    const tdChance = document.createElement('td');
+    const cycleActive = boss.cycle !== undefined && boss.cycle.active;
+    tdChance.textContent = boss.up === true ? "UP!" : cycleActive ? boss.cycle.progressPercent + '%' : "No chance";
+    tdChance.className = boss.up ? "boss-up" : "";
+    row.appendChild(tdChance);
+
+    const tdCycleEnd = document.createElement('td');
+    tdCycleEnd.textContent = boss.cycle ? ((cycleActive && !boss.dead) ? fancyTimeFormat(boss.cycle.timeLeftInSeconds) : "") : "No info";
+    tdCycleEnd.className = cycleActive ? "timer-active" : "timer-not-active";
+    row.appendChild(tdCycleEnd);
+
+    const tdNextCycle = document.createElement('td');
+    tdNextCycle.textContent = boss.cycle ? ((!cycleActive || boss.dead) ? fancyTimeFormat(boss.cycle.activeInSeconds) : "") : "No info";
+    tdNextCycle.className = cycleActive ? "timer-active" : "timer-not-active";
+    row.appendChild(tdNextCycle);
+
+    return row;
 }
 
 function addBoss(boss) {
@@ -208,15 +327,15 @@ function addBoss(boss) {
     tdLoc.textContent = boss.location;
     row.appendChild(tdLoc);
 
-    const tdAction = document.createElement('td');
-    const actionElement = document.createElement('a');
-    actionElement.className = "link-button";
-    actionElement.textContent = "Dead";
-    actionElement.onclick = function() {
-        bossDead(boss.name);
-    };
-    tdAction.appendChild(actionElement);
-    row.appendChild(tdAction);
+    // const tdAction = document.createElement('td');
+    // const actionElement = document.createElement('a');
+    // actionElement.className = "link-button";
+    // actionElement.textContent = "Dead";
+    // actionElement.onclick = function() {
+    //     bossDead(boss.name);
+    // };
+    // tdAction.appendChild(actionElement);
+    // row.appendChild(tdAction);
 
     return row;
 }
