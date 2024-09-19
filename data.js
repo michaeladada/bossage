@@ -20,19 +20,19 @@ const cycles = {
     //     activeMinutes: "20"
     // },
     "Beleth" : {
-        startTimeEpochSeconds: "1726439400", // time date
+        startTimeEpochSeconds: "1726698600", // time date
         cycleMinutes: "300",
         activeMinutes: "120"
     },
     "Baphomet" : {
-        startTimeEpochSeconds: "1726475400", // time date
+        startTimeEpochSeconds: "1726698600", // time date
         cycleMinutes: "300",
         activeMinutes: "150"
     },
     "DarkElder" : {
-        startTimeEpochSeconds: "1726283400", // time date
+        startTimeEpochSeconds: "1726747800", // time date
         cycleMinutes: "120",
-        activeMinutes: "90"
+        activeMinutes: "110"
     },
     "DK" : {
         startTimeEpochSeconds: "1726290000", // time date
@@ -44,11 +44,11 @@ const cycles = {
         cycleMinutes: "240",
         activeMinutes: "120"
     },
-    // "Ifrit" : {
-    //     startTimeEpochSeconds: "1726288200", // time date
-    //     cycleMinutes: "60",
-    //     activeMinutes: "20"
-    // }
+    "Oren" : {
+        startTimeEpochSeconds: "1726587000", // time date
+        cycleMinutes: "330",
+        activeMinutes: "90"
+    }
 }
 
 const bossesDeath = [
