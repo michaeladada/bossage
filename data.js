@@ -63,6 +63,7 @@ const bossesDeath = [
 const SPREADSHEET_ID = '1ksa0AwGso9-Sp5-ngRmQthQbU-yE9DybUc9yIFlqip4'; // Replace with your Spreadsheet ID
 const BOSSES_SHEET_NAME = 'sheet=bosses';
 const TOKEN_SHEET_NAME = 'gid=1537872992';
+const CYCLE_SHEET_NAME = 'gid=1253370658';
 
 // CSV export URL for public Google Sheets
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&`;
@@ -77,12 +78,42 @@ async function fetchCSVData() {
 
         const bossData = parseCSV(csvText);
 
+        const cycles = await parseCyclesCSV();
         const bossesDeath = await processBossData();
 
         buildCycleBossTable(bossData, cycles, bossesDeath);
     } catch (error) {
         console.error('Error fetching CSV data:', error);
     }
+}
+
+async function parseCyclesCSV() {
+    const response = await fetch(CSV_URL + CYCLE_SHEET_NAME);
+    const csvText = await response.text();
+
+    const rows = csvText.trim().split('\n');
+
+    const cycleData = {};
+
+    // Remove Header row
+    rows.shift();
+
+    // Process each row
+    rows.forEach(row => {
+        // Split row into columns based on tab delimiter
+        const columns = row.split(',');
+
+        // Extract values from columns
+        const [name, activeMinutes, cycleMinutes, startTimeEpochSeconds] = columns;
+
+        cycleData[name] = {
+            startTimeEpochSeconds: startTimeEpochSeconds,
+            cycleMinutes: cycleMinutes,
+            activeMinutes: activeMinutes
+        };
+    });
+
+    return cycleData;
 }
 
 function parseCSV(csv) {
