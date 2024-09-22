@@ -43,6 +43,10 @@ body {
     color: green;
     font-weight: bold;
 }
+.boss-double-up {
+    color: purple;
+    font-weight: bold;
+}
 .boss-50-up {
     color: orange;
 }

@@ -21,9 +21,21 @@ function populateFullBossData(rawBosses, cycleData, bossesDeath) {
             boss.lastKilledSeconds = lastBossDeath(boss.name, bossesDeath);
             boss.cycle = cycleData[rawCycleName];
             boss.up = isBossUp(boss.lastKilledSeconds, boss.cycle);
+            boss.double = isDoubleUp(boss.lastKilledSeconds, boss.cycle);
             boss.dead = boss.cycle.active && boss.lastKilledSeconds > boss.cycle.startedAtSecondsEpoch;
         });
     }
+}
+
+function isDoubleUp(lastKilled, cycle) {
+    if(lastKilled === null) {
+        return false;
+    }
+    if(cycle.active) {
+        return lastKilled < cycle.previousPreviousStartedAtSecondsEpoch;
+    }
+    const cycleInactiveTime = (cycle.rawCycle.cycleMinutes - cycle.rawCycle.activeMinutes) * 60;
+    return lastKilled < (cycle.previousPreviousStartedAtSecondsEpoch + cycleInactiveTime);
 }
 
 function isBossUp(lastKilled, cycle) {
@@ -91,6 +103,7 @@ function cycleActiveIn(cycle) {
     const timeInCycleSeconds = diff % (cycle.cycleMinutes * 60);
     const cycleStartedAtSecondsEpoch = currentTimeSeconds - timeInCycleSeconds;
     const previousStartedAtSecondsEpoch = cycleStartedAtSecondsEpoch - (cycle.cycleMinutes * 60);
+    const previousPreviousStartedAtSecondsEpoch = previousStartedAtSecondsEpoch - (cycle.cycleMinutes * 60);
     const activeInSeconds = parseInt((cycle.cycleMinutes * 60) - timeInCycleSeconds, 10);
     const cycleProgressDouble = timeInCycleSeconds / (cycle.activeMinutes * 60) * 100;
     const cycleProgressPercent = parseInt(cycleProgressDouble, 10);
@@ -103,6 +116,7 @@ function cycleActiveIn(cycle) {
         timeLeftInSeconds: timeLeftInSeconds,
         startedAtSecondsEpoch: cycleStartedAtSecondsEpoch,
         previousStartedAtSecondsEpoch: previousStartedAtSecondsEpoch,
+        previousPreviousStartedAtSecondsEpoch: previousPreviousStartedAtSecondsEpoch,
         rawCycle: {...cycle}
     };
 }
@@ -141,6 +155,10 @@ function createBossTable(cycleBosses) {
     clearBosses.sort((a, b) => {
         if (a.cycle === undefined) {
             return 1;
+        }
+
+        if (a.double !== b.double) {
+            return a.double === true ? -1 : 1;
         }
 
         if (a.up !== b.up) {
@@ -294,9 +312,21 @@ function addOneTableBoss(boss) {
     const tdChance = document.createElement('td');
     const cycleActive = boss.cycle !== undefined && boss.cycle.active;
     const hasChance = boss.up || (cycleActive && !boss.dead);
-    tdChance.textContent = boss.up === true ? "UP!" : hasChance ? boss.cycle.progressPercent + '%' : "No chance";
-    const over50 = !boss.up && cycleActive && boss.cycle.progressPercent >= 50;
-    const over75 = !boss.up && cycleActive && boss.cycle.progressPercent >= 75;
+    let chanceText = boss.cycle.progressPercent + '%';
+    if(!hasChance) {
+        chanceText = "No chance";
+    }
+    if(boss.up) {
+        chanceText = "UP!";
+        tdChance.className = "boss-up";
+    }
+    if(boss.double) {
+        chanceText = "Double!";
+        tdChance.className = "boss-double-up";
+    }
+    tdChance.textContent = chanceText;
+    const over50 = !boss.double && !boss.up && cycleActive && boss.cycle.progressPercent >= 50;
+    const over75 = !boss.double && !boss.up && cycleActive && boss.cycle.progressPercent >= 75;
     if (over50) {
         tdChance.className = "boss-50-up";
     }
@@ -306,7 +336,6 @@ function addOneTableBoss(boss) {
     if(!hasChance) {
         tdChance.className = "timer-not-active";
     }
-    tdChance.className += boss.up ? "boss-up" : "";
     row.appendChild(tdChance);
 
     const tdCycleEnd = document.createElement('td');
