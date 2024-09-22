@@ -2,15 +2,15 @@ async function loadBossDeathDataFromDiscord() {
     const response = await fetch('https://discord.com/api/v9/channels/998734693631524904/messages?limit=100', {
         method: 'GET',
         headers: {
-            'Authorization': discordToken,  // Add your authorization token
-            'Content-Type': 'application/json'          // Specify the content type
+            'Authorization': discordToken,
+            'Content-Type': 'application/json'
         }
     });
 
     // const response = await fetch('http://localhost:63342/bossage/out.json', {
     //     method: 'GET',
     //     headers: {
-    //         'Authorization': 'MTI4NjIxNzMxNjAzMTI2Njk0Nw.GSGk-B.TH0_u_aJ2SORVuXVpS4sVYII2gHPDCx6CGUuxY',  // Add your authorization token
+    //         'Authorization': 'xxx',  // Add your authorization token
     //         'Content-Type': 'application/json'          // Specify the content type
     //     }
     // });

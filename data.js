@@ -61,14 +61,18 @@ const bossesDeath = [
 ]
 
 const SPREADSHEET_ID = '1ksa0AwGso9-Sp5-ngRmQthQbU-yE9DybUc9yIFlqip4'; // Replace with your Spreadsheet ID
-const SHEET_NAME = 'bosses'; // Replace with your desired sheet name
+const BOSSES_SHEET_NAME = 'sheet=bosses';
+const TOKEN_SHEET_NAME = 'gid=1537872992';
 
 // CSV export URL for public Google Sheets
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&sheet=${SHEET_NAME}`;
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&`;
 
 async function fetchCSVData() {
     try {
-        const response = await fetch(CSV_URL);
+        const tokenResponse = await fetch(CSV_URL + TOKEN_SHEET_NAME);
+        window.discordToken = await tokenResponse.text();
+
+        const response = await fetch(CSV_URL + BOSSES_SHEET_NAME);
         const csvText = await response.text();
 
         const bossData = parseCSV(csvText);
