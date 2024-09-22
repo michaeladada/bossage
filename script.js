@@ -143,6 +143,7 @@ function fancyTimeFormat(duration) {
 }
 
 function createBossTable(cycleBosses) {
+    document.getElementById("grid-container-boss").innerHTML = "";
     let clearBosses = [];
     for (const cycleName in cycleBosses) {
         // boss name
@@ -153,8 +154,16 @@ function createBossTable(cycleBosses) {
 
     // const entries = Object.entries(clearBosses);
     clearBosses.sort((a, b) => {
-        if (a.cycle === undefined) {
-            return 1;
+
+        // Handle undefined 'cycle' values
+        if (a.cycle === undefined && b.cycle !== undefined) {
+            return 1; // Place undefined 'cycle' at the end
+        }
+        if (b.cycle === undefined && a.cycle !== undefined) {
+            return -1; // Place undefined 'cycle' at the end
+        }
+        if (a.cycle === undefined && b.cycle === undefined) {
+            return 0; // Both are undefined, keep them equal
         }
 
         if (a.double !== b.double) {
@@ -200,7 +209,7 @@ function createBossTable(cycleBosses) {
 
     for (const index in sortedBosses) {
         const boss = sortedBosses[index];
-        if(!boss.hidden) {
+        if(!boss.hidden || showHidden) {
             const bossRow = addOneTableBoss(boss)
             tbody.appendChild(bossRow);
         }
@@ -312,7 +321,7 @@ function addOneTableBoss(boss) {
     const tdChance = document.createElement('td');
     const cycleActive = boss.cycle !== undefined && boss.cycle.active;
     const hasChance = boss.up || (cycleActive && !boss.dead);
-    let chanceText = boss.cycle.progressPercent + '%';
+    let chanceText = boss.cycle !== undefined ? boss.cycle.progressPercent + '%' : "No info";
     if(!hasChance) {
         chanceText = "No chance";
     }
@@ -388,4 +397,25 @@ function bossDead(bossName) {
     if (typeof bossDeadNotification === "function") {
         bossDeadNotification(bossName);
     }
+}
+
+let showHidden = false;
+const toggleHiddenDiv = document.getElementById('toggle-hidden');
+
+if(toggleHiddenDiv !== null) {
+    const toggleButton = document.getElementById('toggle-button');
+    const statusText = document.getElementById('toggle-text');
+
+    // Add an event listener to handle the toggle action
+    toggleButton.addEventListener('change', () => {
+        if (toggleButton.checked) {
+            statusText.textContent = 'Showing all bosses';
+            showHidden = true;
+            createBossTable(myBosses);
+        } else {
+            statusText.textContent = 'Basic bosses';
+            showHidden = false;
+            createBossTable(myBosses);
+        }
+    });
 }

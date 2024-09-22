@@ -97,3 +97,55 @@ th {
     text-decoration: none;        /* Remove underline when focused */
     border-bottom: 2px solid #0056b3;  /* Show border on focus for accessibility */
 }
+
+/* Basic container styling */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hide the default checkbox */
+.toggle-button {
+    display: none;
+}
+
+/* Style the label as a slider */
+.toggle-label {
+    width: 60px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 30px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Create the slider circle */
+.toggle-label::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+/* When checked, change the background color and move the circle */
+.toggle-button:checked + .toggle-label {
+    background-color: #4caf50;
+}
+
+.toggle-button:checked + .toggle-label::before {
+    transform: translateX(30px);
+}
+
+/* Styling the status text */
+#toggle-text {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-top: 20px;
+}

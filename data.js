@@ -67,6 +67,7 @@ const CYCLE_SHEET_NAME = 'gid=1253370658';
 
 // CSV export URL for public Google Sheets
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&`;
+let myBosses = null;
 
 async function fetchCSVData() {
     try {
@@ -77,7 +78,7 @@ async function fetchCSVData() {
         const csvText = await response.text();
 
         const bossData = parseCSV(csvText);
-
+        myBosses = bossData;
         const cycles = await parseCyclesCSV();
         const bossesDeath = await processBossData();
 
