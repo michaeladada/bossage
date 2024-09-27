@@ -329,7 +329,9 @@ function addOneTableBoss(boss) {
         chanceText = "No chance";
     }
     if(boss.up) {
-        chanceText = "UP!";
+        let fullProgressPercent = 100;
+        fullProgressPercent += boss.cycle.active ? boss.cycle.progressPercent : 0
+        chanceText = fullProgressPercent + '%';
         tdChance.className = "boss-up";
     }
     if(boss.double) {
