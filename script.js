@@ -137,6 +137,10 @@ function fancyTimeFormat(duration) {
         ret += "" + mins + "m ";
     }
 
+    if(mins === 0 && hrs === 0) {
+        ret = secs + "s"
+    }
+
     return ret;
 }
 
