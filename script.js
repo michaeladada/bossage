@@ -32,7 +32,7 @@ function isDoubleUp(lastKilled, cycle) {
         return false;
     }
     if(cycle.active) {
-        return lastKilled < cycle.previousPreviousStartedAtSecondsEpoch;
+        return false; // New cycle restarts double
     }
     const cycleInactiveTime = (cycle.rawCycle.cycleMinutes - cycle.rawCycle.activeMinutes) * 60;
     return lastKilled < (cycle.previousPreviousStartedAtSecondsEpoch + cycleInactiveTime);
