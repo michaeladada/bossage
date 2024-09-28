@@ -1,5 +1,18 @@
 async function loadBossDeathDataFromDiscord() {
-    const response = await fetch('https://discord.com/api/v9/channels/998734693631524904/messages?limit=100', {
+    const PAGE_SIZE = 100;
+    const first_100 = await loadBossDeathDataPageFromDiscord(PAGE_SIZE);
+    const lastObjectId = first_100[PAGE_SIZE - 1].id;
+    const next_100 = await loadBossDeathDataPageFromDiscord(PAGE_SIZE, lastObjectId);
+    return first_100.concat(next_100);
+}
+
+async function loadBossDeathDataPageFromDiscord(pageSize, before) {
+    let url = `https://discord.com/api/v9/channels/998734693631524904/messages?limit=${pageSize}`;
+    if(before !== undefined) {
+        url += `&before=${before}`
+    }
+
+    const response = await fetch(url, {
         method: 'GET',
         headers: {
             'Authorization': discordToken,
