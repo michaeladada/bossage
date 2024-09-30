@@ -9,6 +9,12 @@ function buildCycleBossTable(rawBosses, rawCycles, bossesDeath) {
     populateFullBossData(rawBosses, cycleData, cloneBossesDeath)
     // createCycleTable(rawBosses, cycleData);
     createBossTable(rawBosses);
+
+    const loaderContainer = document.getElementById("loader-container");
+    loaderContainer.className += " hidden";
+
+    const toggle = document.getElementById("toggle-hidden");
+    toggle.className = ""
 }
 
 function populateFullBossData(rawBosses, cycleData, bossesDeath) {
