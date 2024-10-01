@@ -40,8 +40,8 @@ function isDoubleUp(lastKilled, cycle) {
     if(cycle.active) {
         return false; // New cycle restarts double
     }
-    const cycleInactiveTime = (cycle.rawCycle.cycleMinutes - cycle.rawCycle.activeMinutes) * 60;
-    return lastKilled < (cycle.previousPreviousStartedAtSecondsEpoch + cycleInactiveTime);
+    const cycleActiveSeconds = cycle.rawCycle.activeMinutes * 60;
+    return lastKilled < (cycle.previousPreviousStartedAtSecondsEpoch + cycleActiveSeconds);
 }
 
 function isBossUp(lastKilled, cycle) {
