@@ -105,6 +105,8 @@ function calculateCycles(rawCycles) {
 
 function cycleActiveIn(cycle) {
     const currentTimeSeconds = new Date().getTime() / 1000;
+
+    cycle.startTimeEpochSeconds = new Date(cycle.startTimeIsoEdt).getTime() / 1000;
     const diff = currentTimeSeconds - cycle.startTimeEpochSeconds;
     const timeInCycleSeconds = diff % (cycle.cycleMinutes * 60);
     const cycleStartedAtSecondsEpoch = currentTimeSeconds - timeInCycleSeconds;
