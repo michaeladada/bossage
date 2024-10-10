@@ -10,11 +10,15 @@ function buildCycleBossTable(rawBosses, rawCycles, bossesDeath) {
     // createCycleTable(rawBosses, cycleData);
     createBossTable(rawBosses);
 
-    const loaderContainer = document.getElementById("loader-container");
-    loaderContainer.className += " hidden";
+    pageLoaded();
 
     const toggle = document.getElementById("toggle-hidden");
     toggle.className = ""
+}
+
+function pageLoaded() {
+    const loaderContainer = document.getElementById("loader-container");
+    loaderContainer.className += " hidden";
 }
 
 function populateFullBossData(rawBosses, cycleData, bossesDeath) {

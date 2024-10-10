@@ -78,6 +78,7 @@ const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export
 let myBosses = null;
 
 async function fetchCSVData() {
+    const fetchData = {};
     try {
         const tokenResponse = await fetch(CSV_URL + TOKEN_SHEET_NAME);
         window.discordToken = await tokenResponse.text();
@@ -85,15 +86,36 @@ async function fetchCSVData() {
         const response = await fetch(CSV_URL + BOSSES_SHEET_NAME);
         const csvText = await response.text();
 
-        const bossData = parseCSV(csvText);
-        myBosses = bossData;
-        const cycles = await parseCyclesCSV();
-        const bossesDeath = await processBossData();
-
-        buildCycleBossTable(bossData, cycles, bossesDeath);
+        fetchData.bossData = parseCSV(csvText);
+        myBosses = fetchData.bossData;
+        fetchData.cycles = await parseCyclesCSV();
     } catch (error) {
+        logError("Failed to load data from CSV. Please try again.")
+        console.error('Error fetching CSV data:', error);
+        return;
+    }
+
+    try {
+        fetchData.bossesDeath = await processBossData();
+    } catch (error) {
+        logError("Failed to load data from discord. Please try again.")
+        console.error('Error fetching discord data:', error);
+        return;
+    }
+
+    try {
+        buildCycleBossTable(fetchData.bossData, fetchData.cycles, fetchData.bossesDeath);
+    } catch (error) {
+        logError("Failed to build boss table.")
         console.error('Error fetching CSV data:', error);
     }
+}
+
+function logError(message) {
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.classList.remove('hidden');
+    errorMessage.innerText = message;
+    pageLoaded();
 }
 
 async function parseCyclesCSV() {

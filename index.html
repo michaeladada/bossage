@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>L1J bosses</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=1">
 </head>
 <body>
     <h1 class="title">L1J bosses</h1>
@@ -17,6 +17,9 @@
         <p id="toggle-text">Basic bosses</p>
     </div>
 
+    <div id="error-message" class="error hidden">
+        Failed to load data. Please try again.
+    </div>
     <div id="loader-container" class="loader-container">
         <div class="loader"></div>
     </div>
@@ -25,9 +28,9 @@
     <div id="grid-container"></div>
     <div id="grid-container-boss"></div>
 
-    <script src="boss-death.js?v=1"></script>
-    <script src="data.js?v=1"></script>
-    <script src="script.js?v=1" onload="fetchCSVData();"></script>
+    <script src="boss-death.js?v=2"></script>
+    <script src="data.js?v=2"></script>
+    <script src="script.js?v=2" onload="fetchCSVData();"></script>
 
 </body>
 </html>
