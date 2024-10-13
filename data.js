@@ -68,10 +68,10 @@ const bossesDeath = [
     // { name: "Baphomet", deathTime: 1720290000},
 ]
 
-const SPREADSHEET_ID = '1ksa0AwGso9-Sp5-ngRmQthQbU-yE9DybUc9yIFlqip4'; // Replace with your Spreadsheet ID
+const SPREADSHEET_ID = '15yPwdkfI7ADlAzHh0hKCDq2xLtVUZgkFdTdzl9FUUKs'; // Replace with your Spreadsheet ID
 const BOSSES_SHEET_NAME = 'sheet=bosses';
-const TOKEN_SHEET_NAME = 'gid=1537872992';
-const CYCLE_SHEET_NAME = 'gid=1253370658';
+const TOKEN_SHEET_NAME = 'gid=1844879346';
+const CYCLE_SHEET_NAME = 'gid=1401786630';
 
 // CSV export URL for public Google Sheets
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&`;
