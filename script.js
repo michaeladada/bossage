@@ -28,16 +28,21 @@ function populateFullBossData(rawBosses, cycleData, bossesDeath) {
         }
         const bosses = rawBosses[rawCycleName];
         bosses.forEach(boss => {
-            boss.lastKilledSeconds = lastBossDeath(boss.name, bossesDeath);
+            const bossDeathNotice = lastBossDeathNotice(boss.name, bossesDeath);
+            boss.lastKilledSeconds = bossDeathNotice === null ? null : bossDeathNotice.deathTime;
+            boss.previousKilledSeconds = bossDeathNotice === null ? null : bossDeathNotice.previousDeathTime;
             boss.cycle = cycleData[rawCycleName];
-            boss.up = isBossUp(boss.lastKilledSeconds, boss.cycle);
-            boss.double = isDoubleUp(boss.lastKilledSeconds, boss.cycle);
+            boss.up = isBossUp(boss);
+            boss.double = isDoubleUp(boss);
             boss.dead = boss.cycle.active && boss.lastKilledSeconds > boss.cycle.startedAtSecondsEpoch;
         });
     }
 }
 
-function isDoubleUp(lastKilled, cycle) {
+function isDoubleUp(boss) {
+    const lastKilled = boss.lastKilledSeconds;
+    const cycle = boss.cycle;
+
     if(lastKilled === null) {
         return false;
     }
@@ -45,12 +50,25 @@ function isDoubleUp(lastKilled, cycle) {
         return false; // New cycle restarts double
     }
     const cycleActiveSeconds = cycle.rawCycle.activeMinutes * 60;
+    // const previousPreviousCycleEnd = cycle.previousPreviousStartedAtSecondsEpoch + cycleActiveSeconds;
+    // if(lastKilled < previousPreviousCycleEnd) {
+    //     return true;
+    // }
+    //
+    // return hadOnlyOneKillInLastTwoCycles(boss) && lastKilled < cycle.startedAtSecondsEpoch;
     return lastKilled < (cycle.previousPreviousStartedAtSecondsEpoch + cycleActiveSeconds);
 }
 
-function isBossUp(lastKilled, cycle) {
+function isBossUp(boss) {
+    const lastKilled = boss.lastKilledSeconds;
+    const cycle = boss.cycle;
+
     if(lastKilled === null) {
         return false;
+    }
+
+    if(hadOnlyOneKillInLastTwoCycles(boss)) {
+        return true;
     }
 
     if(cycle.active) {
@@ -59,7 +77,13 @@ function isBossUp(lastKilled, cycle) {
     return lastKilled < cycle.startedAtSecondsEpoch;
 }
 
-function lastBossDeath(bossName, bossesDeath) {
+function hadOnlyOneKillInLastTwoCycles(boss) {
+    const cycle = boss.cycle;
+    const prevCycleStart = cycle.active? cycle.previousPreviousStartedAtSecondsEpoch : cycle.previousStartedAtSecondsEpoch;
+    return boss.lastKilledSeconds < prevCycleStart || boss.previousKilledSeconds < prevCycleStart;
+}
+
+function lastBossDeathNotice(bossName, bossesDeath) {
     let foundBoss = null;
     bossesDeath.forEach(boss => {
         if(foundBoss === null && boss.name === bossName) {
@@ -73,7 +97,7 @@ function lastBossDeath(bossName, bossesDeath) {
 
     const index = bossesDeath.indexOf(foundBoss);
     bossesDeath.splice(index, 1);
-    return foundBoss.deathTime;
+    return foundBoss;
 }
 
 function calculateCycles(rawCycles) {

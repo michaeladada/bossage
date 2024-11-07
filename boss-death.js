@@ -51,18 +51,25 @@ async function processBossData() {
 
     const bossesDeathArray = [];
     const bossesDeath = {};
+    let darkElderCount = 0;
     rawBossDeath.forEach(row => {
         const fields = row.embeds[0].fields;
         const bossName = getBossName(fields);
         const deathTimeEpochSeconds = new Date(row.timestamp).getTime() / 1000;
+        const boss = { name: bossName, deathTime: deathTimeEpochSeconds }
+        if(bossName !== "Dark Elder" && bossesDeath[bossName] !== undefined && bossesDeath[bossName].previousDeathTime === undefined) {
+            bossesDeath[bossName].previousDeathTime = deathTimeEpochSeconds;
+        }
         if(bossesDeath[bossName] === undefined) {
-            bossesDeath[bossName] = [];
+            bossesDeath[bossName] = boss;
+            bossesDeathArray.push(boss);
+        }
+        if(bossName === "Dark Elder") {
+            darkElderCount++;
+        }
+        if (bossName === "Dark Elder" && darkElderCount === 2) {
             bossesDeathArray.push({ name: bossName, deathTime: deathTimeEpochSeconds });
         }
-        if (bossName === "Dark Elder" && bossesDeath[bossName].length === 1) {
-            bossesDeathArray.push({ name: bossName, deathTime: deathTimeEpochSeconds });
-        }
-        bossesDeath[bossName].push(deathTimeEpochSeconds);
     });
 
     return bossesDeathArray;
